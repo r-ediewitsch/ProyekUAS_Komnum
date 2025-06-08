@@ -20,16 +20,21 @@ void processDataset(int datasetNum, double a, double b, double c, double d, doub
 void createMasterProfitPlotScript(const double results[5][2]);
 void createMasterDerivativePlotScript(void);
 
-/**
- * @brief Main entry point of the program.
- */
+// Main entry point of the program.
 int main() {
+    // Dataset structure: Each row represents coefficients for profit function P(x)
+    // [a, b, c, d, e] where:
+    // a: Linear revenue coefficient (price per unit)
+    // b: Cubic revenue decay factor
+    // c: Quadratic cost coefficient
+    // d: Exponential cost growth factor
+    // e: Fixed cost baseline
     double datasets[5][5] = {
-        {276, 0.001, 0.18, 105, 3381},
-        {235, 0.0008, 0.22, 107, 4004},
-        {266, 0.0005, 0.21, 151, 3901},
-        {286, 0.0007, 0.16, 171, 3037},
-        {258, 0.0006, 0.14, 197, 3431}
+        {276, 0.001, 0.18, 105, 3381},  // Dataset 1: Standard pricing model
+        {235, 0.0008, 0.22, 107, 4004}, // Dataset 2: Higher fixed costs
+        {266, 0.0005, 0.21, 151, 3901}, // Dataset 3: Higher exponential growth
+        {286, 0.0007, 0.16, 171, 3037}, // Dataset 4: Higher linear revenue
+        {258, 0.0006, 0.14, 197, 3431}  // Dataset 5: Modified cost structure
     };
 
     double results[5][2]; // To store maxProfitQty and maxProfit for each dataset
@@ -46,32 +51,24 @@ int main() {
     return 0;
 }
 
-/**
- * @brief Calculates the profit for a given quantity x.
- */
+// Calculates the profit for a given quantity x.
 double calculateProfit(double x, double a, double b, double c, double d, double e) {
     double revenue = a * x - b * pow(x, 3);
     double cost = c * x * x + d * exp(0.01 * x) + e;
     return revenue - cost;
 }
 
-/**
- * @brief Calculates the first derivative of the profit function.
- */
+// Calculates the first derivative of the profit function.
 double calculateProfitDerivative(double x, double a, double b, double c, double d, double e) {
     return (calculateProfit(x + H, a, b, c, d, e) - calculateProfit(x - H, a, b, c, d, e)) / (2 * H);
 }
 
-/**
- * @brief Calculates the second derivative of the profit function.
- */
+// Calculates the second derivative of the profit function.
 double calculateProfitSecondDerivative(double x, double a, double b, double c, double d, double e) {
     return (calculateProfit(x + H, a, b, c, d, e) - 2 * calculateProfit(x, a, b, c, d, e) + calculateProfit(x - H, a, b, c, d, e)) / (H * H);
 }
 
-/**
- * @brief Finds the quantity for maximum profit using the Newton-Raphson method.
- */
+// Finds the quantity for maximum profit using the Newton-Raphson method.
 double newtonRaphson(double x0, double a, double b, double c, double d, double e, int* iter_count) {
     double x = x0;
     int iterations = 0;
@@ -94,9 +91,7 @@ double newtonRaphson(double x0, double a, double b, double c, double d, double e
     return x;
 }
 
-/**
- * @brief Calculates the total profit over a range using Simpson's 1/3 rule.
- */
+// Calculates the total profit over a range using Simpson's 1/3 rule.
 double simpsonsRule(double x_low, double x_high, double a, double b, double c, double d, double e) {
     int n = 200; // Using a fixed, reasonable number of intervals
     if (n % 2 != 0) n++;
@@ -109,9 +104,7 @@ double simpsonsRule(double x_low, double x_high, double a, double b, double c, d
     return (h / 3) * sum;
 }
 
-/**
- * @brief Main processing function for a single dataset.
- */
+// Main processing function for a single dataset.
 void processDataset(int datasetNum, double a, double b, double c, double d, double e, double* maxProfitQty_out, double* maxProfit_out) {
     char resultsFile[50];
     sprintf(resultsFile, "results_%d.txt", datasetNum);
@@ -166,9 +159,7 @@ void processDataset(int datasetNum, double a, double b, double c, double d, doub
     printf("\nDataset %d processed. Results file saved to %s\n", datasetNum, resultsFile);
 }
 
-/**
- * @brief Creates a master Gnuplot script to plot all profit curves comparatively.
- */
+// Creates a master Gnuplot script to plot all profit curves comparatively.
 void createMasterProfitPlotScript(const double results[5][2]) {
     FILE *gp_master = fopen("plot_all_profits.gnu", "w");
     if (!gp_master) {
@@ -198,9 +189,7 @@ void createMasterProfitPlotScript(const double results[5][2]) {
     printf("\nMaster profit plot script saved to plot_all_profits.gnu\n");
 }
 
-/**
- * @brief Creates a master Gnuplot script to plot all derivative curves comparatively.
- */
+// Creates a master Gnuplot script to plot all derivative curves comparatively.
 void createMasterDerivativePlotScript(void) {
     FILE *gp_master = fopen("plot_all_derivatives.gnu", "w");
     if (!gp_master) {
