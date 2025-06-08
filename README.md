@@ -44,7 +44,9 @@ Program ini didasarkan pada model ekonomi berikut:
 3.  **Turunan Numerik**  
     Turunan pertama dan kedua dihitung menggunakan metode _centered finite difference_:
     ```math
-    P'(x) \approx \frac{P(x+h) - P(x-h)}{2h}  
+    P'(x) \approx \frac{P(x+h) - P(x-h)}{2h}
+    ```
+    ```math
     P''(x) \approx \frac{P(x+h) - 2P(x) + P(x-h)}{h^2}
     ```
 
