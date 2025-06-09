@@ -22,29 +22,33 @@ void createMasterDerivativePlotScript(void);
 
 // Main entry point of the program.
 int main() {
-    // Dataset structure: Each row represents coefficients for profit function P(x)
-    // [a, b, c, d, e] where:
-    // a: Linear revenue coefficient (price per unit)
-    // b: Cubic revenue decay factor
-    // c: Quadratic cost coefficient
-    // d: Exponential cost growth factor
-    // e: Fixed cost baseline
-    double datasets[5][5] = {
-        {276, 0.001, 0.18, 105, 3381},  // Dataset 1: Standard pricing model
-        {235, 0.0008, 0.22, 107, 4004}, // Dataset 2: Higher fixed costs
-        {266, 0.0005, 0.21, 151, 3901}, // Dataset 3: Higher exponential growth
-        {286, 0.0007, 0.16, 171, 3037}, // Dataset 4: Higher linear revenue
-        {258, 0.0006, 0.14, 197, 3431}  // Dataset 5: Modified cost structure
-    };
+    FILE *input = fopen("dataset.txt", "r");
+    if (!input) {
+        printf("Error opening dataset.txt\n");
+        return 1;
+    }
 
     double results[5][2]; // To store maxProfitQty and maxProfit for each dataset
 
-    // Process each dataset individually and store the results
+    // Read and process each dataset from file
     for (int i = 0; i < 5; i++) {
-        processDataset(i + 1, datasets[i][0], datasets[i][1], datasets[i][2], datasets[i][3], datasets[i][4], &results[i][0], &results[i][1]);
+        // a: Linear revenue coefficient (price per unit)
+        // b: Cubic revenue decay factor
+        // c: Quadratic cost coefficient
+        // d: Exponential cost growth factor
+        // e: Fixed cost baseline
+        double a, b, c, d, e;
+        if (fscanf(input, "%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e) != 5) {
+            printf("Error reading dataset %d\n", i + 1);
+            fclose(input);
+            return 1;
+        }
+        processDataset(i + 1, a, b, c, d, e, &results[i][0], &results[i][1]);
     }
 
-    // After processing all datasets, create the master plot scripts
+    fclose(input);
+
+    // Create the master plot scripts
     createMasterProfitPlotScript(results);
     createMasterDerivativePlotScript();
 
